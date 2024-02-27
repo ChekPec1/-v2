@@ -11,7 +11,6 @@ using System.Collections.Generic;
 
 List<string> album = new();
 List<string> musics = new();
-
 LoadListFromFile();
 LoadListFromFil();
 void LoadListFromFile()
@@ -106,8 +105,11 @@ while (true)
         case "7":
             AlbumList();
             break;
-        case "8":
+        case "9":
             Commands();
+            break;
+        case "8":
+            Search();
             break;
         case "6":
             DeleteAlbum();
@@ -120,6 +122,26 @@ while (true)
 
 }
 
+void Search()
+{
+    PrintGreen("Выберите в каком списке выполнить поиск: \n Треки - 1 \n Альбомы - 2");
+    if (Console.ReadLine() == "1")
+    {
+        PrintGreen("Ведите кол-во рейтинга у трека: \n 1-3 \n 4-6 \n 7-9 \n 10");
+        if (Console.ReadLine() == "1-3")
+        {
+            if (musics.Count == 0)
+            {
+                PrintGreen("У вас еще нет треков по заданному рейтингу");
+
+            }
+            else
+            {
+
+            }
+        }
+    }
+}
 void MusicAdd()
 {
     PrintGreen("Напиши название");
@@ -130,8 +152,10 @@ void MusicAdd()
     }
     else
     {
-      
         musics.Add(track);
+        PrintGreen($"Какой рейтинг поставим треку {track}, от 1 до 10");
+        string reiting = Console.ReadLine();
+        musics.Add(reiting);
         SaveListToFile();
         PrintRed("Добавлено");
     }
@@ -205,13 +229,14 @@ void MusicsList()
     {
         PrintRed("У вас еще нет треков");
     }
-    else 
+    else
     {
-        PrintGreen("Вот список всех добавленных треков:");
-        musics.ForEach((track)=> Console.WriteLine(track.ToString()));
+        PrintGreen("Вот список всех добавленных треков и их рейтингов:");
+        for (int i = 0; i < musics.Count; i += 2)
+        {
+            Console.WriteLine($"Трек: {musics[i]}, Рейтинг: {musics[i + 1]}");
+        }
     }
-
-
 }
 void AlbumList()
 {
