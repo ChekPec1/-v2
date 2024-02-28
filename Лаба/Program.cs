@@ -73,7 +73,7 @@ void PrintRed(string message)
     Console.ForegroundColor = color;
 }
 PrintGreen("Привет");
-PrintGreen("Вот список команд \n 0)Выход из программы \n 1)Добавление трека \n 2)Удаление трека \n 3)Список всех треков  \n 4)Очистить все записи \n 5)Добавить альбом \n 6)Удалить альбом \n 7)Список альбомов \n 8)Help ");
+PrintGreen("Вот список команд \n 0)Выход из программы \n 1)Добавление трека \n 2)Удаление трека \n 3)Список всех треков  \n 4)Очистить все записи \n 5)Добавить альбом \n 6)Удалить альбом \n 7)Список альбомов \n 8)Поиск трека \n 9)Поиск альбома \n 10)HELP  ");
 
 
 
@@ -105,11 +105,15 @@ while (true)
         case "7":
             AlbumList();
             break;
-        case "9":
+        case "10":
             Commands();
             break;
         case "8":
             Search();
+            break;
+        
+        case "9":
+            AlbumSearch();
             break;
         case "6":
             DeleteAlbum();
@@ -122,26 +126,7 @@ while (true)
 
 }
 
-void Search()
-{
-    PrintGreen("Выберите в каком списке выполнить поиск: \n Треки - 1 \n Альбомы - 2");
-    if (Console.ReadLine() == "1")
-    {
-        PrintGreen("Ведите кол-во рейтинга у трека: \n 1-3 \n 4-6 \n 7-9 \n 10");
-        if (Console.ReadLine() == "1-3")
-        {
-            if (musics.Count == 0)
-            {
-                PrintGreen("У вас еще нет треков по заданному рейтингу");
 
-            }
-            else
-            {
-
-            }
-        }
-    }
-}
 void MusicAdd()
 {
     PrintGreen("Напиши название");
@@ -162,7 +147,7 @@ void MusicAdd()
 }
 void DeleteAlbum()
 {
-    if (album.Count == 0)
+    if (album.Count >= 1)
     {
         PrintRed("Удалять нечего!");
     }
@@ -181,6 +166,35 @@ void DeleteAlbum()
         }
     }
 }
+void Search()
+{
+    PrintGreen("Введите рейтинг для поиска:");
+    string rating = Console.ReadLine();
+
+    if (musics.Count == 0)
+    {
+        PrintRed("У вас еще нет треков");
+    }
+    else
+    {
+        bool trackFound = false;
+
+        PrintGreen($"Список треков с рейтингом {rating}:");
+        for (int i = 1; i < musics.Count; i += 2)
+        {
+            if (musics[i] == rating)
+            {
+                Console.WriteLine($"Трек: {musics[i - 1]}, Рейтинг: {musics[i]}");
+                trackFound = true;
+            }
+        }
+
+        if (!trackFound)
+        {
+            PrintRed("Треков с таким рейтингом не найдено");
+        }
+    }
+}
 void AlbumAdd()
 {
     PrintGreen("Напиши название альбома");
@@ -192,6 +206,8 @@ void AlbumAdd()
     }
     else 
     {
+        PrintGreen($"Какой рейтинг поставите альбому {list}") ;
+        string rating = Console.ReadLine();
     album.Add(list);
     SaveListToFile();
         PrintRed("Добавленно");
@@ -238,6 +254,35 @@ void MusicsList()
         }
     }
 }
+void AlbumSearch()
+{
+    if (album.Count == 0)
+    {
+        PrintRed("У вас еще нет альбома");
+    }
+    else
+    {
+        PrintGreen("Выберите рейтинг для поиска:");
+        string rating = Console.ReadLine();
+        bool albumFound = false;
+        PrintGreen($"Список альбомов с рейтингом {rating}:");
+        for (int i = 1; i < musics.Count; i += 2)
+        {
+            if (album[i] == rating)
+            {
+                Console.WriteLine($"Альбом: {album[i - 1]}, Рейтинг: {album[i]}");
+                albumFound = true;
+            }
+        }
+
+        if (!albumFound) 
+        {
+            PrintRed("Треков с таким рейтингом не найдено");
+        }
+
+        
+    }
+}
 void AlbumList()
 {
     if (album.Count == 0)
@@ -246,8 +291,11 @@ void AlbumList()
     }
     else
     {
-        PrintGreen("Вот список альбомов:");
-        album.ForEach((list) => Console.WriteLine(list.ToString()));
+        PrintGreen("Вот список альбомов и их рейтинг");
+        for (int i = 0; i < album.Count; i += 2)
+        {
+            Console.WriteLine($"Трек: {album[i]}, Рейтинг: {album[i + 1]}");
+        }
     }
 }
 void Clear()
@@ -270,8 +318,9 @@ void Clear()
 }
 void Commands()
 {
-    PrintGreen("\n 0)Выход из программы \n 1)Добавление трека \n 2)Удаление трека \n 3)Список всех треков  \n 4)Очистить все записи \n 5)Добавить альбом \n 6)Удалить альбом \n 7)Список альбомов \n 8)Help ");
-    
+PrintGreen("Вот список команд \n 0)Выход из программы \n 1)Добавление трека \n 2)Удаление трека \n 3)Список всех треков  \n 4)Очистить все записи \n 5)Добавить альбом \n 6)Удалить альбом \n 7)Список альбомов \n 8)Поиск трека \n 9)Поиск альбома \n 10)HELP  ");
+
+
 }
 
 void Exit()
