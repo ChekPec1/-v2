@@ -91,7 +91,7 @@ while (true)
             MusicAdd();
             break;
         case "2":
-            MussicDelete();
+            DeleteMusic();
             break;
         case "3":
             MusicsList();
@@ -147,25 +147,40 @@ void MusicAdd()
 }
 void DeleteAlbum()
 {
-    if (album.Count >= 1)
+    if (album.Count <= 0)
     {
         PrintRed("Удалять нечего!");
     }
     else
     {
-        PrintGreen("Выбери альбом");
-        album.ForEach(album => { Console.WriteLine(album); });
-        string deleti = Console.ReadLine();
-        PrintRed("Для удаления напишите: Выполнить");
-        string r = Console.ReadLine();
-        if (r == "Выполнить")
+        PrintGreen("Выбери альбом для удаления:");
+        for (int i = 0; i < album.Count; i += 2)
         {
-            album.Remove(deleti);
-            PrintRed("Удалено");
-            SaveListToFile();
+            Console.WriteLine($"Альбом: {album[i]}, Рейтинг: {album[i + 1]}");
+        }
+
+        string deleteAlbum = Console.ReadLine();
+        PrintRed("Для удаления напишите: Выполнить");
+        string action = Console.ReadLine();
+
+        if (action == "Выполнить")
+        {
+            int index = album.IndexOf(deleteAlbum);
+            if (index != -1)
+            {
+                album.RemoveAt(index); 
+                album.RemoveAt(index); 
+                PrintRed("Альбом удален");
+                SaveListToFile();
+            }
+            else
+            {
+                PrintRed("Альбом не найден");
+            }
         }
     }
 }
+
 void Search()
 {
     PrintGreen("Введите рейтинг для поиска:");
@@ -197,68 +212,95 @@ void Search()
 }
 void AlbumAdd()
 {
-    PrintGreen("Напиши название альбома");
-    string list = Console.ReadLine();
-    if (list == "")
-    {
-        PrintRed("Не правильно");
+    PrintGreen("Введите название альбома:");
+    string albumName = Console.ReadLine();
 
-    }
-    else 
+    if (albumName == "")
     {
-        PrintGreen($"Какой рейтинг поставите альбому {list}") ;
-        string rating = Console.ReadLine();
-    album.Add(list);
-    SaveListToFile();
-        PrintRed("Добавленно");
-    
-    }
-}
-void MussicDelete()
-{
-    if (musics.Count == 0)
-    {
-        PrintRed("У вас еще нет треков");
+        PrintRed("Неправильный ввод");
     }
     else
     {
-        PrintGreen("Выбери трек");
-        musics.ForEach(track => Console.WriteLine(track));
-        string delete = Console.ReadLine();
-        PrintRed("Чтобы удалить введите слово: Удалить");
-        if (Console.ReadLine() == "Удалить")
-        {
-            musics.Remove(delete);
+        PrintGreen($"Какой рейтинг поставите альбому {albumName}:");
+        string rating = Console.ReadLine();
 
-            PrintRed("Выполнено");
-            SaveListToFile();
+        if (rating == "")
+        {
+            PrintRed("Неправильный ввод рейтинга");
         }
         else
         {
-            PrintRed("Операция не выполнена");
+            album.Add(albumName);
+            album.Add(rating);
+            SaveListToFile();
+            PrintRed("Добавлено");
+        }
+    }
+}
+void DeleteMusic()
+{
+    if (musics.Count <= 0)
+    {
+        PrintRed("Удалять нечего!");
+    }
+    else
+    {
+        PrintGreen("Выберите трек для удаления:");
+        for (int i = 0; i < musics.Count - 1; i += 2)
+        {
+            if (i < musics.Count && i + 1 < musics.Count)
+            {
+                Console.WriteLine($"Трек: {musics[i]}, Рейтинг: {musics[i + 1]}");
+            }
+        }
+
+        string musicToDelete = Console.ReadLine();
+        PrintRed("Для подтверждения удаления введите: Выполнить");
+        string confirmation = Console.ReadLine();
+
+        if (confirmation == "Выполнить")
+        {
+            int index = musics.IndexOf(musicToDelete);
+            if (index != -1)
+            {
+                musics.RemoveAt(index);
+                musics.RemoveAt(index); 
+                PrintRed("Трек удален");
+                SaveListToFile();
+            }
+            else
+            {
+                PrintRed("Трек не найден в списке");
+            }
         }
     }
 }
 void MusicsList()
 {
-    if (musics.Count == 0)
+    if (musics.Count <= 0)
     {
         PrintRed("У вас еще нет треков");
     }
     else
     {
-        PrintGreen("Вот список всех добавленных треков и их рейтингов:");
-        for (int i = 0; i < musics.Count; i += 2)
+        PrintGreen("Список всех добавленных треков и их рейтингов:");
+        for (int i = 0; i < musics.Count - 1; i += 2)
         {
-            Console.WriteLine($"Трек: {musics[i]}, Рейтинг: {musics[i + 1]}");
+            if (i < musics.Count && i + 1 < musics.Count)
+            {
+                Console.WriteLine($"Трек: {musics[i]}, Рейтинг: {musics[i + 1]}");
+            }
         }
     }
 }
+
+
+
 void AlbumSearch()
 {
     if (album.Count == 0)
     {
-        PrintRed("У вас еще нет альбома");
+        PrintRed("У вас еще нет альбомов");
     }
     else
     {
@@ -266,7 +308,7 @@ void AlbumSearch()
         string rating = Console.ReadLine();
         bool albumFound = false;
         PrintGreen($"Список альбомов с рейтингом {rating}:");
-        for (int i = 1; i < musics.Count; i += 2)
+        for (int i = 1; i < album.Count; i += 2)
         {
             if (album[i] == rating)
             {
@@ -275,29 +317,37 @@ void AlbumSearch()
             }
         }
 
-        if (!albumFound) 
+        if (!albumFound)
         {
-            PrintRed("Треков с таким рейтингом не найдено");
+            PrintRed("Альбомов с таким рейтингом не найдено");
         }
-
-        
     }
 }
+
 void AlbumList()
 {
     if (album.Count == 0)
     {
-        PrintRed("У вас еще нет альбома");
+        PrintRed("У вас еще нет альбомов");
     }
     else
     {
-        PrintGreen("Вот список альбомов и их рейтинг");
+        PrintGreen("Список альбомов и их рейтингов:");
         for (int i = 0; i < album.Count; i += 2)
         {
-            Console.WriteLine($"Трек: {album[i]}, Рейтинг: {album[i + 1]}");
+            if (i < album.Count && i + 1 < album.Count)
+            {
+                Console.WriteLine($"Альбом: {album[i]}, Рейтинг: {album[i + 1]}");
+            }
+            else if (i < album.Count && i + 1 == album.Count)
+            {
+                Console.WriteLine($"Неполные данные для последнего альбома: {album[i]}");
+            }
         }
     }
 }
+
+
 void Clear()
 {
 
